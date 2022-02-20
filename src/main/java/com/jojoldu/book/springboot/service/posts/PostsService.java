@@ -34,6 +34,14 @@ public class PostsService {
         return id;
     }
 
+    @Transactional
+    public void delete (Long id) {
+        Posts posts = postsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
+
+        postsRepository.delete(posts);
+    }
+
     public PostsResponseDto findById(Long id) {
         Posts entity = postsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
@@ -41,7 +49,7 @@ public class PostsService {
         return new PostsResponseDto(entity);
     }
 
-    /*@Transactional 해주면 트랜잭션 범위는 유지하되, 조회 기능만 남겨두어 조회 속도가 개선됨.
+    /*@Transactional(readOnly = true) 해주면 트랜잭션 범위는 유지하되, 조회 기능만 남겨두어 조회 속도가 개선됨.
     등록, 수정, 삭제 기능이 전혀 없는 서비스 메소드에서 사용하는 것 추천.*/
     @Transactional(readOnly = true)
     public List<PostsListResponseDto> findAllDesc() {
